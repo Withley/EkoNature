@@ -1,0 +1,92 @@
+@import "tailwindcss";
+
+@theme {
+  /* Colors */
+  --color-bg-main: #101415;
+  --color-bg-section: #1A2324;
+  --color-bg-secondary: #2F3B3C;
+  --color-accent-primary: #00C57A;
+  --color-accent-light: #7DF2C6;
+  --color-text-main: #E1E1E1;
+  
+  /* Shadows */
+  --shadow-card: 0 4px 24px rgba(0, 0, 0, 0.35);
+  
+  /* Border Radius */
+  --radius-card: 16px;
+  --radius-input: 12px;
+  
+  /* Font Family */
+  --font-heading: 'Montserrat', system-ui, sans-serif;
+  --font-body: 'Inter', system-ui, sans-serif;
+}
+
+@layer base {
+  @font-face {
+    font-family: 'Montserrat';
+    font-style: normal;
+    font-weight: 400 700;
+    font-display: swap;
+    src: url(https://fonts.gstatic.com/s/montserrat/v26/JTUSjIg1_i6t8kCHKm459WlhyyTh89Y.woff2) format('woff2');
+  }
+
+  @font-face {
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 400 700;
+    font-display: swap;
+    src: url(https://fonts.gstatic.com/s/inter/v13/UcCO3FwrK3iLTeHuS_fvQtMwCp50KnMw2boKoduKmMEVuLyfAZ9hiA.woff2) format('woff2');
+  }
+
+  * {
+    @apply border-[#2F3B3C];
+  }
+
+  body {
+    font-family: var(--font-body);
+    background-color: var(--color-bg-main);
+    color: var(--color-text-main);
+    font-size: 16px;
+    line-height: 1.6;
+  }
+
+  /* Light Mode Styles */
+  .light-mode * {
+    @apply border-gray-200;
+  }
+
+  .light-mode body {
+    background-color: #FFFFFF;
+    color: #1A1A1A;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-heading);
+    line-height: 1.2;
+  }
+
+  h1 {
+    font-size: 48px;
+    font-weight: 700;
+  }
+
+  h2 {
+    font-size: 36px;
+    font-weight: 700;
+  }
+
+  h3 {
+    font-size: 24px;
+    font-weight: 600;
+  }
+
+  p {
+    font-size: 16px;
+    line-height: 1.6;
+  }
+
+  .caption {
+    font-size: 13px;
+    line-height: 1.4;
+  }
+}
