@@ -19,6 +19,15 @@
   /* Font Family */
   --font-heading: 'Montserrat', system-ui, sans-serif;
   --font-body: 'Inter', system-ui, sans-serif;
+  
+  /* Custom Breakpoints */
+  --breakpoint-xs: 320px;
+  --breakpoint-sm-480: 480px;
+  --breakpoint-sm-576: 576px;
+  --breakpoint-md: 768px;
+  --breakpoint-lg-992: 992px;
+  --breakpoint-lg: 1024px;
+  --breakpoint-xl-1200: 1200px;
 }
 
 @layer base {
@@ -88,5 +97,77 @@
   .caption {
     font-size: 13px;
     line-height: 1.4;
+  }
+}
+
+/* Responsive Utilities for Custom Breakpoints */
+@layer utilities {
+  /* 320px breakpoint */
+  @media (min-width: 320px) {
+    .xs\:px-2 { padding-inline: 0.5rem; }
+    .xs\:px-3 { padding-inline: 0.75rem; }
+    .xs\:px-4 { padding-inline: 1rem; }
+    .xs\:py-2 { padding-block: 0.5rem; }
+    .xs\:py-3 { padding-block: 0.75rem; }
+    .xs\:text-sm { font-size: 0.875rem; }
+    .xs\:text-base { font-size: 1rem; }
+    .xs\:text-lg { font-size: 1.125rem; }
+    .xs\:w-full { width: 100%; }
+    .xs\:flex-col { flex-direction: column; }
+    .xs\:grid-cols-1 { grid-template-columns: repeat(1, minmax(0, 1fr)); }
+  }
+
+  /* 480px breakpoint */
+  @media (min-width: 480px) {
+    .sm480\:px-4 { padding-inline: 1rem; }
+    .sm480\:px-6 { padding-inline: 1.5rem; }
+    .sm480\:py-4 { padding-block: 1rem; }
+    .sm480\:py-6 { padding-block: 1.5rem; }
+    .sm480\:text-base { font-size: 1rem; }
+    .sm480\:text-lg { font-size: 1.125rem; }
+    .sm480\:text-xl { font-size: 1.25rem; }
+    .sm480\:grid-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .sm480\:flex-row { flex-direction: row; }
+  }
+
+  /* 576px breakpoint */
+  @media (min-width: 576px) {
+    .sm576\:px-4 { padding-inline: 1rem; }
+    .sm576\:px-6 { padding-inline: 1.5rem; }
+    .sm576\:px-8 { padding-inline: 2rem; }
+    .sm576\:py-6 { padding-block: 1.5rem; }
+    .sm576\:py-8 { padding-block: 2rem; }
+    .sm576\:text-lg { font-size: 1.125rem; }
+    .sm576\:text-xl { font-size: 1.25rem; }
+    .sm576\:text-2xl { font-size: 1.5rem; }
+    .sm576\:grid-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .sm576\:grid-cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  }
+
+  /* 992px breakpoint */
+  @media (min-width: 992px) {
+    .lg992\:px-8 { padding-inline: 2rem; }
+    .lg992\:px-12 { padding-inline: 3rem; }
+    .lg992\:py-8 { padding-block: 2rem; }
+    .lg992\:py-12 { padding-block: 3rem; }
+    .lg992\:text-xl { font-size: 1.25rem; }
+    .lg992\:text-2xl { font-size: 1.5rem; }
+    .lg992\:text-3xl { font-size: 1.875rem; }
+    .lg992\:grid-cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .lg992\:grid-cols-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  }
+
+  /* 1200px breakpoint */
+  @media (min-width: 1200px) {
+    .xl1200\:px-12 { padding-inline: 3rem; }
+    .xl1200\:px-16 { padding-inline: 4rem; }
+    .xl1200\:px-24 { padding-inline: 6rem; }
+    .xl1200\:py-12 { padding-block: 3rem; }
+    .xl1200\:py-16 { padding-block: 4rem; }
+    .xl1200\:text-2xl { font-size: 1.5rem; }
+    .xl1200\:text-3xl { font-size: 1.875rem; }
+    .xl1200\:text-4xl { font-size: 2.25rem; }
+    .xl1200\:grid-cols-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+    .xl1200\:max-w-7xl { max-width: 80rem; }
   }
 }
