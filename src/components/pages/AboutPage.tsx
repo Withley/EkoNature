@@ -1,12 +1,12 @@
-import { motion } from 'motion/react';
-import { Footer } from '../Footer';
-import globeIcon from 'figma:asset/b135128d799295f7b858a70c1058d10e7151e9d8.png';
-import bookIcon from 'figma:asset/4805f6a74e866be31d68525329cff2e924729172.png';
-import peopleIcon from 'figma:asset/a22b7f8dce784524e7ec5cba50d16f401d53c028.png';
-import { translations, type Language } from '../../utils/translations';
+  import { motion } from 'motion/react';
+  import { Footer } from '../Footer';
+  import globeIcon from '../../assets/Globe.png';
+  import bookIcon from 'figma:asset/4805f6a74e866be31d68525329cff2e924729172.png';
+  import peopleIcon from 'figma:asset/a22b7f8dce784524e7ec5cba50d16f401d53c028.png';
+  import { translations, type Language } from '../../utils/translations';
 
-interface AboutPageProps {
-  isDarkMode: boolean;
+  interface AboutPageProps {
+    isDarkMode: boolean;
   language: Language;
 }
 
