@@ -16,7 +16,16 @@ export function HomePage({ onNavigate, isDarkMode = true, language = 'az' }: Hom
   return (
     <div className="min-h-[calc(100vh-64px)] md:min-h-[calc(100vh-72px)]">
       {/* Hero Section */}
-      <section className="max-w-[1440px] mx-auto px-4 md:px-8 lg:px-[120px] py-12 md:py-20 lg:py-32">
+      <section className="relative max-w-[1440px] mx-auto px-4 md:px-8 lg:px-[120px] py-12 md:py-20 lg:py-32">
+        {/* Background Image */}
+        <div
+          className="absolute inset-0 -z-10 bg-cover bg-center"
+          style={{
+            backgroundImage: "url('https://images.unsplash.com/photo-1718307842442-e4c776ecdc96?q=80&w=1074&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D')",
+            opacity: 0.2
+          }}
+        ></div>
+
         <motion.div 
           className="text-center max-w-3xl mx-auto"
           initial={{ opacity: 0, y: 30 }}
