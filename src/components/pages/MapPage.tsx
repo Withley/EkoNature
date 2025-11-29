@@ -2,7 +2,9 @@ import React, { useState } from "react";
 import { MapPin, Search, X } from "lucide-react";
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import { Icon } from "leaflet";
+import { motion, AnimatePresence } from "motion/react";
 import "leaflet/dist/leaflet.css";
+import { type Language, getTranslation } from '../../utils/translations';
 
 // Fix default marker icons for Leaflet
 delete (Icon.Default.prototype as any)._getIconUrl;
@@ -25,7 +27,13 @@ interface RecyclingPoint {
   lng: number;
 }
 
-export function MapPage() {
+interface MapPageProps {
+  isDarkMode: boolean;
+  language: Language;
+}
+
+export function MapPage({ isDarkMode, language }: MapPageProps) {
+  const t = (key: keyof typeof import('../../utils/translations').translations.az) => getTranslation(language, key);
   const [selectedFilters, setSelectedFilters] = useState<string[]>([
     "plastic",
     "paper",
@@ -127,30 +135,44 @@ export function MapPage() {
   );
 
   return (
-    <div className="h-[calc(100vh-72px)] flex flex-col md:flex-row">
+    <div className={`h-[calc(100vh-64px)] md:h-[calc(100vh-72px)] flex flex-col md:flex-row ${isDarkMode ? 'bg-[#101415]' : 'bg-white'}`}>
       {/* Sidebar */}
-      <div className="w-full md:w-[280px] bg-[#1A2324] p-6 overflow-y-auto border-r border-[#2F3B3C]">
-        <h3 className="text-[#E1E1E1] mb-4">Filtrlər</h3>
+      <motion.div 
+        className={`w-full md:w-[280px] lg:w-[320px] p-4 sm:p-6 overflow-y-auto border-r transition-colors ${isDarkMode ? 'bg-[#1A2324] border-[#2F3B3C]' : 'bg-gray-50 border-gray-200'}`}
+        initial={{ opacity: 0, x: -30 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ duration: 0.5 }}
+      >
+        <h3 className={`mb-4 ${isDarkMode ? 'text-[#E1E1E1]' : 'text-[#101415]'}`}>{t('filterByType')}</h3>
 
-        <div className="mb-6 relative">
+        <motion.div 
+          className="mb-6 relative"
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+        >
           <input
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Ünvan ilə axtar..."
-            className="w-full bg-[#2F3B3C] text-[#E1E1E1] px-4 py-3 pl-10 rounded-[12px] outline-none focus:ring-2 focus:ring-[#00C57A]"
+            placeholder={language === 'az' ? 'Ünvan ilə axtar...' : language === 'en' ? 'Search by address...' : 'Поиск по адресу...'}
+            className={`w-full ${isDarkMode ? 'bg-[#2F3B3C] text-[#E1E1E1]' : 'bg-white text-[#101415] border border-gray-300'} px-4 py-3 pl-10 rounded-[12px] outline-none focus:ring-2 focus:ring-[#00C57A] transition-all`}
           />
           <Search
             size={16}
-            className="absolute left-3 top-1/2 -translate-y-1/2 text-[#E1E1E1] opacity-50"
+            className={`absolute left-3 top-1/2 -translate-y-1/2 ${isDarkMode ? 'text-[#E1E1E1]' : 'text-gray-400'} opacity-50`}
           />
-        </div>
+        </motion.div>
 
         <div className="space-y-3">
-          {filters.map((f) => (
-            <label
+          {filters.map((f, index) => (
+            <motion.label
               key={f.value}
               className="flex items-center gap-3 cursor-pointer group"
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.3 + index * 0.1 }}
+              whileHover={{ x: 5 }}
             >
               <input
                 type="checkbox"
@@ -159,54 +181,70 @@ export function MapPage() {
                 className="w-5 h-5 rounded accent-[#00C57A]"
               />
               <div className="flex items-center gap-2">
-                <div
+                <motion.div
                   className="w-4 h-4 rounded-full border-2"
                   style={{
                     backgroundColor: f.color,
                     borderColor: f.color,
                   }}
+                  whileHover={{ scale: 1.2 }}
                 />
-                <span className="text-[#E1E1E1] group-hover:text-[#00C57A]">
+                <span className={`group-hover:text-[#00C57A] transition-colors ${isDarkMode ? 'text-[#E1E1E1]' : 'text-[#101415]'}`}>
                   {f.label}
                 </span>
               </div>
-            </label>
+            </motion.label>
           ))}
         </div>
 
-        <div className="mt-8">
-          <h3 className="text-[#E1E1E1] mb-4">
-            Nəticələr ({filteredPoints.length})
+        <motion.div 
+          className="mt-8"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.5 }}
+        >
+          <h3 className={`mb-4 ${isDarkMode ? 'text-[#E1E1E1]' : 'text-[#101415]'}`}>
+            {language === 'az' ? 'Nəticələr' : language === 'en' ? 'Results' : 'Результаты'} ({filteredPoints.length})
           </h3>
 
           <div className="space-y-3">
-            {filteredPoints.map((point) => (
-              <button
+            {filteredPoints.map((point, index) => (
+              <motion.button
                 key={point.id}
                 onClick={() => setSelectedPoint(point)}
-                className={`w-full text-left p-3 rounded-lg ${
+                className={`w-full text-left p-3 rounded-lg transition-all ${
                   selectedPoint?.id === point.id
                     ? "bg-[#00C57A] bg-opacity-20 border border-[#00C57A]"
-                    : "bg-[#2F3B3C] hover:bg-opacity-80"
+                    : isDarkMode ? "bg-[#2F3B3C] hover:bg-opacity-80" : "bg-white border border-gray-200 hover:border-[#00C57A]"
                 }`}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.6 + index * 0.05 }}
+                whileHover={{ scale: 1.02, x: 5 }}
+                whileTap={{ scale: 0.98 }}
               >
                 <div className="flex items-start gap-2">
-                  <MapPin className="text-[#00C57A] mt-1" size={16} />
+                  <MapPin className="text-[#00C57A] mt-1 flex-shrink-0" size={16} />
                   <div>
-                    <div className="text-[#E1E1E1] mb-1">{point.title}</div>
-                    <div className="text-[#E1E1E1] opacity-60 text-[11px]">
+                    <div className={`mb-1 ${isDarkMode ? 'text-[#E1E1E1]' : 'text-[#101415]'}`}>{point.title}</div>
+                    <div className={`opacity-60 text-[11px] ${isDarkMode ? 'text-[#E1E1E1]' : 'text-gray-600'}`}>
                       {point.address}
                     </div>
                   </div>
                 </div>
-              </button>
+              </motion.button>
             ))}
           </div>
-        </div>
-      </div>
+        </motion.div>
+      </motion.div>
 
       {/* Map */}
-      <div className="flex-1 relative min-h-[400px] md:min-h-0">
+      <motion.div 
+        className="flex-1 relative min-h-[400px] md:min-h-0"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.6, delay: 0.3 }}
+      >
         <MapContainer
           center={[40.4093, 49.8671]}
           zoom={12}
@@ -237,29 +275,37 @@ export function MapPage() {
           ))}
         </MapContainer>
 
-        {selectedPoint && (
-          <div className="absolute bottom-6 left-1/2 -translate-x-1/2 w-[90%] max-w-md bg-[#1A2324] rounded-[16px] p-6 shadow-lg z-[1000]">
-            <button
-              onClick={() => setSelectedPoint(null)}
-              className="absolute top-4 right-4 text-[#E1E1E1] hover:text-[#00C57A]"
+        <AnimatePresence>
+          {selectedPoint && (
+            <motion.div 
+              className={`absolute bottom-6 left-1/2 -translate-x-1/2 w-[90%] max-w-md rounded-[16px] p-6 shadow-lg z-[1000] ${isDarkMode ? 'bg-[#1A2324]' : 'bg-white border-2 border-gray-200'}`}
+              initial={{ opacity: 0, y: 20, scale: 0.95 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 20, scale: 0.95 }}
+              transition={{ duration: 0.3 }}
             >
-              <X size={20} />
-            </button>
+              <button
+                onClick={() => setSelectedPoint(null)}
+                className={`absolute top-4 right-4 transition-colors ${isDarkMode ? 'text-[#E1E1E1] hover:text-[#00C57A]' : 'text-gray-600 hover:text-[#00C57A]'}`}
+              >
+                <X size={20} />
+              </button>
 
-            <h3 className="text-[#E1E1E1] mb-3">{selectedPoint.title}</h3>
-            <div className="space-y-2 text-[#E1E1E1] opacity-80">
-              <div className="flex items-start gap-2">
-                <MapPin className="text-[#00C57A] mt-0.5" size={16} />
-                {selectedPoint.address}
+              <h3 className={`mb-3 ${isDarkMode ? 'text-[#E1E1E1]' : 'text-[#101415]'}`}>{selectedPoint.title}</h3>
+              <div className={`space-y-2 opacity-80 ${isDarkMode ? 'text-[#E1E1E1]' : 'text-[#101415]'}`}>
+                <div className="flex items-start gap-2">
+                  <MapPin className="text-[#00C57A] mt-0.5 flex-shrink-0" size={16} />
+                  {selectedPoint.address}
+                </div>
+                <div className="flex items-start gap-2">
+                  <span className="text-[#00C57A]">🕐</span>
+                  {selectedPoint.hours}
+                </div>
               </div>
-              <div className="flex items-start gap-2">
-                <span className="text-[#00C57A]">🕐</span>
-                {selectedPoint.hours}
-              </div>
-            </div>
-          </div>
-        )}
-      </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </motion.div>
     </div>
   );
 }

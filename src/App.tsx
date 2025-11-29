@@ -156,6 +156,7 @@ export default function App() {
       {currentPage === 'home' && <HomePage onNavigate={handleNavigate} isDarkMode={isDarkMode} language={language} />}
       {currentPage === 'login' && <LoginPage onLogin={handleLogin} onNavigate={handleNavigate} isDarkMode={isDarkMode} language={language} />}
       {currentPage === 'register' && <RegisterPage onRegister={handleRegister} onNavigate={handleNavigate} isDarkMode={isDarkMode} language={language} />}
+      {currentPage === 'map' && <MapPage isDarkMode={isDarkMode} language={language} />}
       {currentPage === 'welcome' && user && <WelcomePage userName={user.name} onNavigate={handleNavigate} isDarkMode={isDarkMode} language={language} />}
       {currentPage === 'map' && <MapPage isDarkMode={isDarkMode} language={language} />}
       {currentPage === 'plant' && <PlantRecognitionPage isDarkMode={isDarkMode} language={language} />}

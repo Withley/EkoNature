@@ -114,11 +114,38 @@ export function PlantRecognitionPage({ isDarkMode, language }: PlantRecognitionP
     { text: t.chatWelcomeMessage, sender: 'bot' }
   ]);
   const [userInput, setUserInput] = useState('');
+  const [error, setError] = useState<string | null>(null);
 
-  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>, fromChat: boolean = false) => {
+  // Mock plant data generator
+  const generateMockPlantData = (language: Language): PlantInfo => {
+    const mockPlants = {
+      en: [
+        { name: 'Monstera Deliciosa', family: 'Araceae', waterNeeds: 'Medium - 1-2 times per week', sunlight: 'Bright, indirect light', toxicity: 'Toxic to pets', ecologicalBenefits: 'Cleans the air, absorbs CO2 and produces oxygen. Has a positive impact on nature.', similarPlants: ['Philodendron', 'Pothos', 'Swiss Cheese Plant'] },
+        { name: 'Snake Plant', family: 'Asparagaceae', waterNeeds: 'Low - once every 2-3 weeks', sunlight: 'Low to bright indirect light', toxicity: 'Mildly toxic to pets', ecologicalBenefits: 'Excellent air purifier, produces oxygen at night. Very low maintenance.', similarPlants: ['ZZ Plant', 'Aloe Vera', 'Spider Plant'] },
+        { name: 'Pothos', family: 'Araceae', waterNeeds: 'Medium - 1-2 times per week', sunlight: 'Bright, indirect light', toxicity: 'Toxic to pets', ecologicalBenefits: 'Cleans the air, removes formaldehyde. Easy to care for.', similarPlants: ['Philodendron', 'Monstera', 'Heartleaf'] }
+      ],
+      ru: [
+        { name: 'Монстера деликатесная', family: 'Ароидные', waterNeeds: 'Средний - 1-2 раза в неделю', sunlight: 'Яркий, рассеянный свет', toxicity: 'Токсично для домашних животных', ecologicalBenefits: 'Очищает воздух, поглощает CO2 и производит кислород. Оказывает положительное влияние на природу.', similarPlants: ['Филодендрон', 'Потос', 'Швейцарский сырный завод'] },
+        { name: 'Сансевиерия', family: 'Спаржевые', waterNeeds: 'Низкий - раз в 2-3 недели', sunlight: 'Низкое или яркое рассеянное освещение', toxicity: 'Слабо токсично для домашних животных', ecologicalBenefits: 'Отличный очиститель воздуха, производит кислород ночью. Очень неприхотлив.', similarPlants: ['Замиокулькас', 'Алоэ Вера', 'Хлорофитум'] },
+        { name: 'Потос', family: 'Ароидные', waterNeeds: 'Средний - 1-2 раза в неделю', sunlight: 'Яркий, рассеянный свет', toxicity: 'Токсично для домашних животных', ecologicalBenefits: 'Очищает воздух, удаляет формальдегид. Легко ухаживать.', similarPlants: ['Филодендрон', 'Монстера', 'Сердцелистный'] }
+      ],
+      az: [
+        { name: 'Monstera Deliciosa', family: 'Araceae', waterNeeds: 'Orta - həftədə 1-2 dəfə', sunlight: 'Parlaq, dolayı işıq', toxicity: 'Ev heyvanları üçün zəhərlidir', ecologicalBenefits: 'Havanı təmizləyir, CO2 udur və oksigen istehsal edir. Təbiətə müsbət təsir göstərir.', similarPlants: ['Philodendron', 'Pothos', 'İsveçrə Pendiri'] },
+        { name: 'İlan Bitkisi', family: 'Asparagaceae', waterNeeds: 'Aşağı - hər 2-3 həftədə bir', sunlight: 'Aşağıdan parlaq dolayı işığa', toxicity: 'Ev heyvanları üçün yüngül zəhərlidir', ecologicalBenefits: 'Əla hava təmizləyicisi, gecə oksigen istehsal edir. Çox az qulluq tələb edir.', similarPlants: ['ZZ Bitkisi', 'Aloe Vera', 'Hörümçək Bitkisi'] },
+        { name: 'Pothos', family: 'Araceae', waterNeeds: 'Orta - həftədə 1-2 dəfə', sunlight: 'Parlaq, dolayı işıq', toxicity: 'Ev heyvanları üçün zəhərlidir', ecologicalBenefits: 'Havanı təmizləyir, formaldehid aradan qaldırır. Qulluq etmək asandır.', similarPlants: ['Philodendron', 'Monstera', 'Ürək Yarpağı'] }
+      ]
+    };
+
+    const plants = mockPlants[language];
+    const randomPlant = plants[Math.floor(Math.random() * plants.length)];
+    return randomPlant;
+  };
+
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>, fromChat: boolean = false) => {
     const file = e.target.files?.[0];
     if (file) {
       setIsUploading(true);
+      setError(null);
       
       // Create preview
       const reader = new FileReader();
@@ -132,51 +159,40 @@ export function PlantRecognitionPage({ isDarkMode, language }: PlantRecognitionP
       };
       reader.readAsDataURL(file);
 
-      // Simulate API call
+      // Simulate API delay
       setTimeout(() => {
-        const mockPlantData = {
-          az: {
-            name: 'Ficus Elastica (Kauçuk Ağacı)',
-            family: 'Moraceae',
-            waterNeeds: 'Orta - həftədə 1-2 dəfə',
-            sunlight: 'Parlaq, dolayı işıq',
-            toxicity: 'Ev heyvanları üçün zəhərli',
-            ecologicalBenefits: 'Havanı təmizləyir, formaldehid və digər toksinləri absorbə edir. CO2 udur və oksigen istehsal edir.',
-            similarPlants: ['Ficus Lyrata', 'Ficus Benjamina', 'Monstera Deliciosa']
-          },
-          en: {
-            name: 'Ficus Elastica (Rubber Plant)',
-            family: 'Moraceae',
-            waterNeeds: 'Medium - 1-2 times per week',
-            sunlight: 'Bright, indirect light',
-            toxicity: 'Toxic to pets',
-            ecologicalBenefits: 'Cleans the air, absorbs formaldehyde and other toxins. Absorbs CO2 and produces oxygen.',
-            similarPlants: ['Ficus Lyrata', 'Ficus Benjamina', 'Monstera Deliciosa']
-          },
-          ru: {
-            name: 'Ficus Elastica (Каучуковое дерево)',
-            family: 'Moraceae',
-            waterNeeds: 'Средний - 1-2 раза в неделю',
-            sunlight: 'Яркий, рассеянный свет',
-            toxicity: 'Токсичен для домашних животных',
-            ecologicalBenefits: 'Очищает воздух, поглощает формальдегид и другие токсины. Поглощает CO2 и производит кислород.',
-            similarPlants: ['Ficus Lyrata', 'Ficus Benjamina', 'Monstera Deliciosa']
-          }
-        };
-
-        setPlantInfo(mockPlantData[language]);
-        setIsUploading(false);
-        
-        if (fromChat) {
-          const chatResponse = language === 'en' 
-            ? `✅ Plant identified!\n\n🌿 Name: Ficus Elastica (Rubber Plant)\n🧬 Family: Moraceae\n💧 Water: 1-2 times per week\n☀️ Light: bright, indirect\n⚠️ Toxic to pets\n\nDetailed information is shown on the page!`
-            : language === 'ru'
-            ? `✅ Растение идентифицировано!\n\n🌿 Название: Ficus Elastica (Каучуковое дерево)\n🧬 Семейство: Moraceae\n💧 Вода: 1-2 раза в неделю\n☀️ Свет: яркий, рассеянный\n⚠️ Токсичен для домашних животных\n\nПодробная информация показана на странице!`
-            : `✅ Bitkini tanıdım!\n\n🌿 Ad: Ficus Elastica (Kauçuk Ağacı)\n🧬 Ailə: Moraceae\n💧 Su: həftədə 1-2 dəfə\n☀️ İşıq: parlaq, dolayı\n⚠️ Ev heyvanları üçün zəhərli\n\nƏtraflı məlumat səhifədə göstərilir!`;
+        try {
+          const plantData = generateMockPlantData(language);
+          setPlantInfo(plantData);
           
-          setChatMessages(prev => [...prev, { text: chatResponse, sender: 'bot' }]);
+          if (fromChat) {
+            const chatResponse = language === 'en' 
+              ? `✅ Plant identified!\n\n🌿 Name: ${plantData.name}\n🧬 Family: ${plantData.family}\n💧 Water: ${plantData.waterNeeds}\n☀️ Light: ${plantData.sunlight}\n\nDetailed information is shown on the page!`
+              : language === 'ru'
+              ? `✅ Растение идентифицировано!\n\n🌿 Название: ${plantData.name}\n🧬 Семейство: ${plantData.family}\n💧 Вода: ${plantData.waterNeeds}\n☀️ Свет: ${plantData.sunlight}\n\nПодробная информация показана на странице!`
+              : `✅ Bitkini tanıdım!\n\n🌿 Ad: ${plantData.name}\n🧬 Ailə: ${plantData.family}\n💧 Su: ${plantData.waterNeeds}\n☀️ İşıq: ${plantData.sunlight}\n\nƏtraflı məlumat səhifədə göstərilir!`;
+            
+            setChatMessages(prev => [...prev, { text: chatResponse, sender: 'bot' }]);
+          }
+        } catch (err) {
+          const errorMessage = language === 'en'
+            ? 'Failed to identify plant. Please try again with a clearer image.'
+            : language === 'ru'
+            ? 'Не удалось определить растение. Попробуйте еще раз с более четким изображением.'
+            : 'Bitki tanıma uğursuz oldu. Xahiş edirik daha aydın bir şəkil ilə yenidən cəhd edin.';
+          
+          setError(errorMessage);
+          
+          if (fromChat) {
+            setChatMessages(prev => [...prev, { 
+              text: errorMessage, 
+              sender: 'bot' 
+            }]);
+          }
+        } finally {
+          setIsUploading(false);
         }
-      }, 2000);
+      }, 1500); // Simulate API delay
     }
   };
 
@@ -289,7 +305,7 @@ export function PlantRecognitionPage({ isDarkMode, language }: PlantRecognitionP
   };
 
   return (
-    <div className={`min-h-[calc(100vh-64px)] md:min-h-[calc(100vh-72px)] py-6 md:py-12 relative overflow-hidden ${isDarkMode ? 'bg-[#101415]' : 'bg-white'}`}>
+    <div className={`min-h-[calc(100vh-64px)] md:min-h-[calc(100vh-72px)] py-4 xs:py-6 sm480:py-8 md:py-12 relative overflow-hidden ${isDarkMode ? 'bg-[#101415]' : 'bg-white'}`}>
       {/* Animated Background Elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         {[...Array(5)].map((_, i) => (
@@ -297,9 +313,9 @@ export function PlantRecognitionPage({ isDarkMode, language }: PlantRecognitionP
         ))}
       </div>
 
-      <div className="max-w-[1440px] mx-auto px-4 md:px-8 lg:px-[120px] relative z-10">
+      <div className="max-w-[1440px] mx-auto px-2 xs:px-4 sm480:px-6 sm576:px-8 md:px-8 lg:px-12 lg992:px-16 xl1200:px-24 relative z-10">
         <motion.div 
-          className="text-center mb-8 md:mb-12"
+          className="text-center mb-6 xs:mb-8 sm480:mb-10 md:mb-12"
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
@@ -335,7 +351,7 @@ export function PlantRecognitionPage({ isDarkMode, language }: PlantRecognitionP
               transition={{ duration: 0.5 }}
             >
               <motion.div
-                className={`relative rounded-[16px] p-12 text-center border-2 border-dashed transition-all overflow-hidden ${
+                className={`relative rounded-[16px] p-4 xs:p-6 sm480:p-8 md:p-12 text-center border-2 border-dashed transition-all overflow-hidden ${
                   isDarkMode 
                     ? 'bg-[#1A2324] border-[#2F3B3C] hover:border-[#00C57A]' 
                     : 'bg-white border-gray-300 hover:border-[#00C57A]'
@@ -415,9 +431,9 @@ export function PlantRecognitionPage({ isDarkMode, language }: PlantRecognitionP
                           ease: "easeInOut"
                         }}
                       >
-                        <Camera className="mx-auto text-[#00C57A] mb-6" size={64} />
+                        <Camera className="mx-auto text-[#00C57A] mb-4 xs:mb-6" size={48} style={{ width: 'clamp(32px, 8vw, 64px)', height: 'clamp(32px, 8vw, 64px)' }} />
                       </motion.div>
-                      <h3 className={isDarkMode ? 'text-[#E1E1E1] mb-4' : 'text-[#101415] mb-4'}>{t.uploadImage}</h3>
+                      <h3 className={`${isDarkMode ? 'text-[#E1E1E1]' : 'text-[#101415]'} mb-3 xs:mb-4 text-base xs:text-lg sm480:text-xl`}>{t.uploadImage}</h3>
                       <p className={`opacity-70 mb-8 caption ${isDarkMode ? 'text-[#E1E1E1]' : 'text-[#101415]'}`}>
                         {t.plantRecognitionSubtitle}
                       </p>
@@ -430,7 +446,7 @@ export function PlantRecognitionPage({ isDarkMode, language }: PlantRecognitionP
                           className="hidden"
                         />
                         <motion.span 
-                          className="cursor-pointer inline-flex items-center gap-3 px-8 py-4 bg-[#00C57A] text-[#101415] rounded-[12px] hover:bg-[#7DF2C6] transition-all"
+                          className="cursor-pointer inline-flex items-center gap-2 xs:gap-3 px-4 xs:px-6 sm480:px-8 py-3 xs:py-4 bg-[#00C57A] text-[#101415] rounded-[12px] hover:bg-[#7DF2C6] transition-all text-sm xs:text-base"
                           whileHover={{ scale: 1.05, boxShadow: '0 10px 30px rgba(0, 197, 122, 0.3)' }}
                           whileTap={{ scale: 0.95 }}
                         >
@@ -454,6 +470,18 @@ export function PlantRecognitionPage({ isDarkMode, language }: PlantRecognitionP
                     </motion.div>
                   )}
                 </AnimatePresence>
+                
+                {/* Error Message */}
+                {error && (
+                  <motion.div
+                    className="mt-4 p-4 rounded-lg bg-red-500 bg-opacity-20 border border-red-500 text-red-500"
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                  >
+                    <p className="text-sm">{error}</p>
+                  </motion.div>
+                )}
               </motion.div>
 
               {/* Telegram Bot Info Card */}
@@ -507,7 +535,7 @@ export function PlantRecognitionPage({ isDarkMode, language }: PlantRecognitionP
           ) : (
             /* Result Section */
             <motion.div 
-              className="grid md:grid-cols-2 gap-8"
+              className="grid grid-cols-1 sm576:grid-cols-2 gap-4 sm480:gap-6 md:gap-8"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
@@ -534,7 +562,7 @@ export function PlantRecognitionPage({ isDarkMode, language }: PlantRecognitionP
                       <img
                         src={uploadedImage}
                         alt="Uploaded plant"
-                        className="w-full h-[400px] object-cover rounded-[12px] mb-4"
+                        className="w-full h-[200px] xs:h-[250px] sm480:h-[300px] sm576:h-[350px] md:h-[400px] object-cover rounded-[12px] mb-4"
                       />
                       <motion.div
                         className="absolute top-4 right-4 bg-[#00C57A] rounded-full p-2"
@@ -797,7 +825,7 @@ export function PlantRecognitionPage({ isDarkMode, language }: PlantRecognitionP
       <AnimatePresence>
         {isChatOpen && (
           <motion.div
-            className={`fixed bottom-24 right-4 md:right-8 w-[340px] md:w-[380px] rounded-2xl shadow-2xl z-50 overflow-hidden ${
+            className={`fixed bottom-20 xs:bottom-20 sm480:bottom-24 right-2 xs:right-2 sm480:right-4 md:right-8 w-[calc(100vw-1rem)] xs:w-[calc(100vw-2rem)] sm480:w-[340px] md:w-[380px] max-w-[380px] rounded-2xl shadow-2xl z-50 overflow-hidden ${
               isDarkMode ? 'bg-[#1A2324] border border-[#2F3B3C]' : 'bg-white border border-gray-200'
             }`}
             initial={{ opacity: 0, y: 20, scale: 0.95 }}
@@ -930,7 +958,7 @@ export function PlantRecognitionPage({ isDarkMode, language }: PlantRecognitionP
       {/* Chatbot Button */}
       <motion.button
         onClick={() => setIsChatOpen(true)}
-        className="fixed bottom-8 right-4 md:right-8 bg-[#00C57A] text-[#101415] p-4 rounded-full shadow-2xl hover:bg-[#7DF2C6] transition-all z-40"
+        className="fixed bottom-4 xs:bottom-4 sm480:bottom-8 right-2 xs:right-2 sm480:right-4 md:right-8 bg-[#00C57A] text-[#101415] p-3 xs:p-3 sm480:p-4 rounded-full shadow-2xl hover:bg-[#7DF2C6] transition-all z-40"
         whileHover={{ scale: 1.1 }}
         whileTap={{ scale: 0.9 }}
         animate={{ y: [0, -8, 0] }}
