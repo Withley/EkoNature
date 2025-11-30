@@ -86,25 +86,7 @@ JavaScript / TypeScript
 React.js
 
 HTML & CSS
-
-## 🗂 Project Structure
-
-Greenify/
-├─ server/ # Backend (Node.js + MySQL)
-│ ├─ index.js # Entry point
-│ └─ ... # Other server files
-├─ src/ # Frontend (React)
-│ ├─ components/
-│ ├─ pages/
-│ └─ assets/
-├─ package.json
-└─ README.md
-
-kotlin
-Copy code
-
-> 👥 Contributors: This project was developed by a team of 4 participants during the Milli Hakaton.
-> 
-> 📄 License: This project is open-source and can be freely used, studied, and modified.
+👥 Contributors: This project was developed by a team of 4 participants during the Milli Hakaton.
+📄 License: This project is open-source and can be freely used, studied, and modified.
 
 
